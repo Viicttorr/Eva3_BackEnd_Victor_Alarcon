@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="mb-4 text-center">Salas de Estudio</h2>
+<div class="row">
+    {% for sala in salas %}
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm">
+            {% if sala.reserva_activa %}
+            <span hidden data-fecha-termino="{{ sala.reserva_activa.fecha_termino|date:'Y-m-d H:i:s' }}"></span>
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ sala.nombre_sala }}</h5>
+                <p class="card-text">Capacidad: {{ sala.capacidad }} personas</p>
+                {% if sala.disponible %}
+                    <span class="badge bg-success">Disponible</span>
+                    <a href="{% url 'reservar_sala' sala.id_sala %}" class="btn btn-primary btn-sm mt-2">Reservar</a>
+                {% else %}
+                    <span class="badge bg-danger">Ocupada</span>
+                {% endif %}
+                <a href="{% url 'detalle_reserva' sala.id_sala %}" class="btn btn-primary btn-sm mt-2">Detalle reserva</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+{% block scripts %}
+<script> //Recarga pagina una vez terminado el tiempo
+document.querySelectorAll("[data-fecha-termino]").forEach(el => {
+  const fechaStr = el.dataset.fechaTermino;
+  if (!fechaStr) return;
+
+  const fechaTermino = new Date(fechaStr.replace(" ", "T"));
+  const ahora = new Date();
+  const msRestantes = fechaTermino.getTime() - ahora.getTime();
+
+  if (msRestantes > 0) {
+    setTimeout(() => {
+      location.reload();
+    }, msRestantes);
+  }
+});
+</script>
+
+<script>// Recarga la pagina al crear o actualizar fecha_termino
+let lastUpdate = null;
+let alreadyReloaded = false;
+
+setInterval(() => {
+  fetch("/api/last_update/")
+    .then(r => r.json())
+    .then(d => {
+      
+      // Si cambió la fecha_termino
+      if (lastUpdate && d.last_update && d.last_update !== lastUpdate) {
+        location.reload();
+      }
+
+      // Si está expirada y no recarga
+      if (d.expired && !alreadyReloaded) {
+        alreadyReloaded = true;
+        location.reload();
+      }
+
+      if (d.last_update) {
+        lastUpdate = d.last_update;
+      }
+    })
+    .catch(() => {});
+}, 10000); // cada 10s
+</script>
+{% endblock %}
