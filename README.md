@@ -79,6 +79,7 @@ El proyecto consiste en un sistema de **gestión y reserva de salas de estudio**
    - python manage.py createsuperuser
 7. Ejecutar servidor:
    - python manage.py runserver
+8. Ingresar al admin y crear las Salas.
 
 ---
 
