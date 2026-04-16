@@ -1,4 +1,4 @@
-# 📚 Evaluación 3 - Programación Back End (Django)
+# 📚 Sistema de Reserva de Salas — Biblioteca
 
 Aplicación web desarrollada en **Django** como parte de la Evaluación Sumativa 3 de Programación Back End.  
 El proyecto consiste en un sistema de **gestión y reserva de salas de estudio** para la biblioteca del Instituto Tecnológico de Innovación Digital (ITID).
